@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Utilisateur</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #080710;
+            color: #ffffff;
+        }
+       
+        .navbar {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+       
+        .navbar h1 {
+            margin: 0;
+        }
+       
+        .navbar a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+       
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+       
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            margin-top: 50px; /* Adjust this value to provide space below the navbar */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+       
+        .sidebar {
+            background-color: #222;
+            padding: 20px;
+            width: 200px;
+            height: calc(100vh - 50px); /* Adjust this value to account for navbar height */
+            color: #ffffff;
+            position: fixed;
+            top: 50px; /* Adjust this value to be right below the navbar */
+            left: 0;
+            overflow-y: auto;
+        }
+       
+        .sidebar h2 {
+            margin-top: 0;
+        }
+       
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+       
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+       
+        .profile-container {
+            background-color: rgba(255, 255, 255, 0.1); /* Updated background color */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 600px;
+        }
+        .profile-container img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+        }
+        .profile-container h2 {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        .profile-container p {
+            color: #ddd;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .profile-container .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-container button {
+            margin-top: 15px;
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 500px;
+        }
+        .profile-container button:hover {
+            background-color: #0056b3;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: left;
+            width: 500px;
+        }
+        .modal-content label {
+            display: block;
+            margin-top: 15px;
+            font-size: 18px;
+            color:#000;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .modal-content button {
+            margin-top: 20px;
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+        .modal:target {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: left;
+            width: 500px;
+            position: relative; /* Needed for positioning the close button */
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: #0056b3;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>My Website</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Profil</a>
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="sidebar">
+            <h2>Sidebar</h2>
+            <a href={% url 'home' %}> PDF INTO TEXT </a>
+            <a href="{% url 'profil' %}">profil</a>
+            <a href="{% url 'pdf/user' %}">mes pdf </a>
+        </div>
+<div class="profile-container">
+    <img src="https://via.placeholder.com/150" alt="Profil">
+    <h2 id="profile-name">{{ user.username }}</h2>
+    <p id="profile-prenom">Prénom: {{ user.first_name }}</p>
+    <p id="profile-email">Email: {{ user.email }}</p>
+    <div class="buttons">
+        <a href="#modal-info">
+            <button>Modifier les Informations</button>
+        </a>
+        <a href="#modal-password">
+            <button>Modifier le Mot de Passe</button>
+        </a>
+    </div>
+    <div id="message" class="message"></div>
+</div>
+ 
+<div id="modal-info" class="modal">
+    <div class="modal-content">
+        <button onclick="closeModal('modal-info')" class="close-btn">&times;</button>
+        <h2>Modifier les Informations</h2>
+        <form id="info-form">
+            {% csrf_token %}
+            <label for="name">Nom:</label>
+            <input type="text" id="name" value="{{ user.username }}">
+            <label for="prenom">Prénom:</label>
+            <input type="text" id="prenom" value="{{ user.first_name }}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="{{ user.email }}">
+            <button type="button" id="save-info-btn">Enregistrer</button>
+        </form>
+    </div>
+</div>
+ 
+<div id="modal-password" class="modal">
+    <div class="modal-content">
+        <button onclick="closeModal('modal-password')" class="close-btn">&times;</button>
+      
+        <h2>Modifier le Mot de Passe</h2>
+        <form id="password-form">
+            {% csrf_token %}
+            <label for="current-password">Ancien Mot de Passe:</label>
+            <input type="password" id="current-password">
+            <label for="new-password">Nouveau Mot de Passe:</label>
+            <input type="password" id="new-password">
+            <button  type="button" id="save-password-btn">Enregistrer</button>
+        </form>
+    </div>
+</div>
+ 
+<script>    
+    document.addEventListener('DOMContentLoaded', function() {
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Handle updating user information
+        document.getElementById('save-info-btn').addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const prenom = document.getElementById('prenom').value;
+            const email = document.getElementById('email').value;
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    
+            fetch('{% url "profil" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'username': name,
+                    'first_name': prenom,
+                    'email': email
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+                messageDiv.className = data.message === 'Profile updated successfully!' ? 'message success' : 'message error';
+                messageDiv.style.display = 'block';
+                if (data.message === 'Profile updated successfully!') {
+                    document.getElementById('profile-name').textContent = name;
+                    document.getElementById('profile-prenom').textContent = `Prénom: ${prenom}`;
+                    document.getElementById('profile-email').textContent = `Email: ${email}`;
+                    document.getElementById('')
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = 'An unexpected error occurred.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+            });
+        });
+    
+        // Handle updating user password
+        document.getElementById('save-password-btn').addEventListener('click', function() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    
+            fetch('{% url "change_password" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'current_password': currentPassword,
+                    'new_password': newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+                messageDiv.className = data.message === 'Password updated successfully!' ? 'message success' : 'message error';
+                messageDiv.style.display = 'block';
+                if (data.message === 'Password updated successfully!') {
+                    // Optionally, redirect to the login page or show a logout button
+                    setTimeout(() => window.location.href = '/login/', 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = 'An unexpected error occurred.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+            });
+        });
+    });
+    
+</script>
+</body>
+</html>
